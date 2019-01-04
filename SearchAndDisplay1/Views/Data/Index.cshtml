@@ -1,0 +1,217 @@
+﻿@model IEnumerable<SearchAndDisplay.Models.Model1>
+
+@{
+    Layout = null; ;
+}
+
+
+<!DOCTYPE html>
+
+<head>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+</head>
+
+<div class="container" style="background-color:cornflowerblue">
+
+
+    <h2 align="center" style="color:darkmagenta">Employee Details</h2>
+
+    <div class="form-inline">
+
+
+
+        <div class="form-group">
+            <table>
+                <tr>
+                    <td><label id="lblSearch" style="font-family:'Times New Roman'" class="text-danger">Search By ID &nbsp;</label></td>
+                    <td><input type="text" id="txtSearch" /> <span id="errmsg" style="color:red"></span></td>
+                   
+                </tr>
+            </table>
+        </div>
+
+
+
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-5">
+                <a id="btnSave" value="Search" class="Save btn btn-primary" onclick=" SearchTbl()">
+                    <span class="glyphicon glyphicon-search"></span>
+                    <span>Search</span>
+                </a>
+
+
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-12">
+                <table>
+                    <tr>
+                        <td>
+                            <select id="inputstate" class="form-control">
+                                <option selected><b>DESIGNATION</b></option>
+                                <option value="PAT">PAT</option>
+                                <option value="PA">PA</option>
+                                <option value="SA">SA</option>
+                                <option value="ASSOCIATE">ASSOCIATE</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    @*table creation*@
+    <table id="table" class="table table-bordered" style="background-color:bisque">
+        <thead>
+            <tr>
+                <td><b>EMPID</b></td>
+                <td><b>NAME</b></td>
+                <td><b>AGE</b></td>
+                <td><b>DESIGNATION</b></td>
+                <td><b>EXP YEARS</b></td>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+
+</div>
+
+
+
+
+@*Displaying Database*@
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#txtSearch").keypress(function (e) {
+            if (e.keyCode == 13) {
+                SearchTbl();
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/Data/Display",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+
+                var trHTML = '';
+
+                $.each(response, function (i, item) {
+                    trHTML += '<tr>'
+                    trHTML += '<td>' + item.EmpId + '</td>' +
+                        '<td>' + item.Name + '</td>' +
+                        '<td>' + item.Age + '</td>' +
+                        '<td>' + item.Designation + '</td>' +
+                        '<td>' + item.ExpYears + '</td>';
+                    trHTML += '</tr>'
+
+                });
+
+                $('#table tbody').append(trHTML);
+            },
+            error: function () {
+                alert('display error');
+            }
+        });
+
+    });
+
+    
+    //to accept only numeric
+    $("#txtSearch").keypress(function (e) {
+        if ((e.which < 48 || e.which > 57)) {
+             return false;
+       }
+    });
+
+    //Implementing search operation
+
+    function SearchTbl() {
+
+        if ($('#txtSearch').val() == "") {
+            alert("Please enter EmpId to search");
+            return false;
+        }
+
+
+
+        $.ajax({
+            type: "GET",
+            url: "/Data/Search?EmpId=" + $('#txtSearch').val(),
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+
+                var trHTML = '';
+                if (response.length == 0) {
+                    alert("No Results Found");
+                    return false;
+                }
+                $("#table tbody").empty();
+                $.each(response, function (i, item) {
+                    trHTML += '<tr>'
+                    trHTML += '<td>' + item.EmpId + '</td>' +
+                        '<td>' + item.Name + '</td>' +
+                        '<td>' + item.Age + '</td>' +
+                        '<td>' + item.Designation + '</td>' +
+                        '<td>' + item.ExpYears + '</td>';
+
+                    trHTML += '</tr>'
+                });
+                $('#table tbody').append(trHTML);
+            },
+            error: function (response) {
+
+                alert('search error');
+            }
+        });
+    }
+</script>
+
+@*dropdown and filtering*@
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#inputstate").change(function () {
+
+            $.ajax({
+                type: "GET",
+                url: "/Data/Dropdown?Designation=" + $("#inputstate").val(),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+
+                    $("#table tbody").empty();
+                    var trHTML = '';
+
+                    $.each(response, function (i, item) {
+                        trHTML += '<tr>'
+                        trHTML += '<td>' + item.EmpId + '</td>' +
+                            '<td>' + item.Name + '</td>' +
+                            '<td>' + item.Age + '</td>' +
+                            '<td>' + item.Designation + '</td>' +
+                            '<td>' + item.ExpYears + '</td>';
+                        trHTML += '</tr>'
+                    });
+
+                    $('#table tbody').append(trHTML);
+                },
+                error: function () {
+                    alert("dropdown error");
+                }
+            });
+        });
+    });
+</script>
+
