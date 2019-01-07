@@ -20,23 +20,23 @@ namespace SearchAndDisplay.Controllers
         [HttpGet]
         public JsonResult Display()
         {
-            SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\727761\source\repos\SearchAndDisplay\SearchAndDisplay\App_Data\EmpInfo.mdf;Integrated Security=True");
-            con.Open();
-            SqlCommand cmd = new SqlCommand("SELECT * from Employee", con);
-            cmd.ExecuteNonQuery();
+            SqlConnection connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\727761\source\repos\SearchAndDisplay\SearchAndDisplay\App_Data\EmpInfo.mdf;Integrated Security=True");
+            connection.Open();
+            SqlCommand comd = new SqlCommand("SELECT * from Employee", connection);
+            comd.ExecuteNonQuery();
             List<Model1> DisplayList = new List<Model1>();
-            Model1 m;
-            using (SqlDataReader read = cmd.ExecuteReader())
+            Model1 DBlist;
+            using (SqlDataReader read = comd.ExecuteReader())
             {
                 while (read.Read())
                 {
-                    m = new Model1();
-                    m.EmpId = int.Parse(read["EmpId"].ToString());
-                    m.Name = read["Name"].ToString();
-                    m.Age = int.Parse(read["Age"].ToString());
-                    m.Designation = read["Designation"].ToString();
-                    m.ExpYears = int.Parse(read["ExpYears"].ToString());
-                    DisplayList.Add(m);
+                    DBlist = new Model1();
+                    DBlist.EmpId = int.Parse(read["EmpId"].ToString());
+                    DBlist.Name = read["Name"].ToString();
+                    DBlist.Age = int.Parse(read["Age"].ToString());
+                    DBlist.Designation = read["Designation"].ToString();
+                    DBlist.ExpYears = int.Parse(read["ExpYears"].ToString());
+                    DisplayList.Add(DBlist);
 
                 }
             }
@@ -50,29 +50,29 @@ namespace SearchAndDisplay.Controllers
         public JsonResult Search(int EmpId)
 
         {
-            SqlConnection con1 = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\727761\source\repos\SearchAndDisplay\SearchAndDisplay\App_Data\EmpInfo.mdf;Integrated Security=True");
-            con1.Open();
-            string q = "SELECT * from Employee WHERE EmpId='" + EmpId + "'";
-            SqlCommand cmd1 = new SqlCommand(q, con1);
-            cmd1.ExecuteNonQuery();
+            SqlConnection connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\727761\source\repos\SearchAndDisplay\SearchAndDisplay\App_Data\EmpInfo.mdf;Integrated Security=True");
+            connection.Open();
+            string select = "SELECT * from Employee WHERE EmpId='" + EmpId + "'";
+            SqlCommand comd = new SqlCommand(select, connection);
+            comd.ExecuteNonQuery();
             List<Model1> SearchItem = new List<Model1>();
-            Model1 n = new Model1();
-            using (SqlDataReader read = cmd1.ExecuteReader())
+            Model1 Searchresult = new Model1();
+            using (SqlDataReader read = comd.ExecuteReader())
             {
                 while (read.Read())
                 {
 
-                    n.EmpId = int.Parse(read["EmpId"].ToString());
-                    n.Name = read["Name"].ToString();
-                    n.Age = int.Parse(read["Age"].ToString());
-                    n.Designation = read["Designation"].ToString();
-                    n.ExpYears = int.Parse(read["ExpYears"].ToString());
-                    SearchItem.Add(n);
+                    Searchresult.EmpId = int.Parse(read["EmpId"].ToString());
+                    Searchresult.Name = read["Name"].ToString();
+                    Searchresult.Age = int.Parse(read["Age"].ToString());
+                    Searchresult.Designation = read["Designation"].ToString();
+                    Searchresult.ExpYears = int.Parse(read["ExpYears"].ToString());
+                    SearchItem.Add(Searchresult);
 
                 }
 
             }
-            con1.Close();
+            connection.Close();
             return Json(SearchItem, JsonRequestBehavior.AllowGet);
         }
 
@@ -80,29 +80,27 @@ namespace SearchAndDisplay.Controllers
         [HttpGet]
         public JsonResult Dropdown(string Designation)
         {
-            SqlConnection conn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\727761\source\repos\SearchAndDisplay\SearchAndDisplay\App_Data\EmpInfo.mdf;Integrated Security=True");
-            conn.Open();
-            string q = "SELECT * from Employee WHERE Designation='" + Designation + "'";
-            SqlCommand cmd1 = new SqlCommand(q, conn);
-            cmd1.ExecuteNonQuery();
+            SqlConnection connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\727761\source\repos\SearchAndDisplay\SearchAndDisplay\App_Data\EmpInfo.mdf;Integrated Security=True");
+            connection.Open();
+            string select = "SELECT * from Employee WHERE Designation='" + Designation + "'";
+            SqlCommand comd = new SqlCommand(select, connection);
+            comd.ExecuteNonQuery();
             List<Model1> DropList = new List<Model1>();
-            Model1 n = new Model1();
-            SqlDataReader dr;
-            dr = cmd1.ExecuteReader();
-            while (dr.Read())
+            SqlDataReader datareader;
+            datareader = comd.ExecuteReader();
+            while (datareader.Read())
             {
                 DropList.Add(new Model1()
                 {
-                    EmpId = dr.GetInt32(dr.GetOrdinal("EmpId")),
-                    Name = dr.GetString(dr.GetOrdinal("Name")),
-                    Age = dr.GetInt32(dr.GetOrdinal("Age")),
-                    Designation = dr.GetString(dr.GetOrdinal("Designation")),
-                    ExpYears = dr.GetInt32(dr.GetOrdinal("ExpYears"))
+                    EmpId = datareader.GetInt32(datareader.GetOrdinal("EmpId")),
+                    Name = datareader.GetString(datareader.GetOrdinal("Name")),
+                    Age = datareader.GetInt32(datareader.GetOrdinal("Age")),
+                    Designation = datareader.GetString(datareader.GetOrdinal("Designation")),
+                    ExpYears = datareader.GetInt32(datareader.GetOrdinal("ExpYears"))
                 });
-
             }
-            dr.Close();
-            conn.Close();
+            datareader.Close();
+            connection.Close();
             return Json(DropList, JsonRequestBehavior.AllowGet);
         }
 
