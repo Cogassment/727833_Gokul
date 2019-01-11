@@ -20,10 +20,10 @@ namespace SearchAndDisplay.Controllers
         [HttpGet]
         public JsonResult Display()
         {
-            SqlConnection connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\727761\source\repos\SearchAndDisplay\SearchAndDisplay\App_Data\EmpInfo.mdf;Integrated Security=True");
+            string connectionstring = ConfigurationManager.ConnectionStrings["Constring"].ConnectionString;
+            SqlConnection connection = new SqlConnection(connectionstring);
             connection.Open();
             SqlCommand comd = new SqlCommand("SELECT * from Employee", connection);
-            comd.ExecuteNonQuery();
             List<Model1> DisplayList = new List<Model1>();
             Model1 DBlist;
             using (SqlDataReader read = comd.ExecuteReader())
@@ -50,11 +50,11 @@ namespace SearchAndDisplay.Controllers
         public JsonResult Search(int EmpId)
 
         {
-            SqlConnection connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\727761\source\repos\SearchAndDisplay\SearchAndDisplay\App_Data\EmpInfo.mdf;Integrated Security=True");
+            string connectionstring = ConfigurationManager.ConnectionStrings["Constring"].ConnectionString;
+            SqlConnection connection = new SqlConnection(connectionstring);
             connection.Open();
             string select = "SELECT * from Employee WHERE EmpId='" + EmpId + "'";
             SqlCommand comd = new SqlCommand(select, connection);
-            comd.ExecuteNonQuery();
             List<Model1> SearchItem = new List<Model1>();
             Model1 Searchresult = new Model1();
             using (SqlDataReader read = comd.ExecuteReader())
@@ -80,11 +80,11 @@ namespace SearchAndDisplay.Controllers
         [HttpGet]
         public JsonResult Dropdown(string Designation)
         {
-            SqlConnection connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\727761\source\repos\SearchAndDisplay\SearchAndDisplay\App_Data\EmpInfo.mdf;Integrated Security=True");
+            string connectionstring = ConfigurationManager.ConnectionStrings["Constring"].ConnectionString;
+            SqlConnection connection = new SqlConnection(connectionstring);
             connection.Open();
             string select = "SELECT * from Employee WHERE Designation='" + Designation + "'";
             SqlCommand comd = new SqlCommand(select, connection);
-            comd.ExecuteNonQuery();
             List<Model1> DropList = new List<Model1>();
             SqlDataReader datareader;
             datareader = comd.ExecuteReader();
@@ -98,6 +98,7 @@ namespace SearchAndDisplay.Controllers
                     Designation = datareader.GetString(datareader.GetOrdinal("Designation")),
                     ExpYears = datareader.GetInt32(datareader.GetOrdinal("ExpYears"))
                 });
+
             }
             datareader.Close();
             connection.Close();
