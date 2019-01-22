@@ -5,7 +5,7 @@ using System.Web;
 
 namespace SearchAndDisplay.Models
 {
-    public class Model1
+    public class Employeemodel
     {
         public int EmpId { get; set; }
         public string Name { get; set; }
