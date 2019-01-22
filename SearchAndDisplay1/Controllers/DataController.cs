@@ -20,17 +20,17 @@ namespace SearchAndDisplay.Controllers
         [HttpGet]
         public JsonResult Display()
         {
-            string connectionstring = ConfigurationManager.ConnectionStrings["Constring"].ConnectionString;
-            SqlConnection connection = new SqlConnection(connectionstring);
+            DBmodel Dataconnection = new DBmodel();
+            SqlConnection connection = Dataconnection.DBConnection();
             connection.Open();
             SqlCommand comd = new SqlCommand("SELECT * from Employee", connection);
-            List<Model1> DisplayList = new List<Model1>();
-            Model1 DBlist;
+            List<Employeemodel> DisplayList = new List<Employeemodel>();
+            Employeemodel DBlist;
             using (SqlDataReader read = comd.ExecuteReader())
             {
                 while (read.Read())
                 {
-                    DBlist = new Model1();
+                    DBlist = new Employeemodel();
                     DBlist.EmpId = int.Parse(read["EmpId"].ToString());
                     DBlist.Name = read["Name"].ToString();
                     DBlist.Age = int.Parse(read["Age"].ToString());
@@ -50,13 +50,13 @@ namespace SearchAndDisplay.Controllers
         public JsonResult Search(int EmpId)
 
         {
-            string connectionstring = ConfigurationManager.ConnectionStrings["Constring"].ConnectionString;
-            SqlConnection connection = new SqlConnection(connectionstring);
+            DBmodel Dataconnection = new DBmodel();
+            SqlConnection connection = Dataconnection.DBConnection();
             connection.Open();
             string select = "SELECT * from Employee WHERE EmpId='" + EmpId + "'";
             SqlCommand comd = new SqlCommand(select, connection);
-            List<Model1> SearchItem = new List<Model1>();
-            Model1 Searchresult = new Model1();
+            List<Employeemodel> SearchItem = new List<Employeemodel>();
+            Employeemodel Searchresult = new Employeemodel();
             using (SqlDataReader read = comd.ExecuteReader())
             {
                 while (read.Read())
@@ -80,17 +80,17 @@ namespace SearchAndDisplay.Controllers
         [HttpGet]
         public JsonResult Dropdown(string Designation)
         {
-            string connectionstring = ConfigurationManager.ConnectionStrings["Constring"].ConnectionString;
-            SqlConnection connection = new SqlConnection(connectionstring);
+            DBmodel Dataconnection = new DBmodel();
+            SqlConnection connection = Dataconnection.DBConnection();
             connection.Open();
             string select = "SELECT * from Employee WHERE Designation='" + Designation + "'";
             SqlCommand comd = new SqlCommand(select, connection);
-            List<Model1> DropList = new List<Model1>();
+            List<Employeemodel> DropList = new List<Employeemodel>();
             SqlDataReader datareader;
             datareader = comd.ExecuteReader();
             while (datareader.Read())
             {
-                DropList.Add(new Model1()
+                DropList.Add(new Employeemodel()
                 {
                     EmpId = datareader.GetInt32(datareader.GetOrdinal("EmpId")),
                     Name = datareader.GetString(datareader.GetOrdinal("Name")),
